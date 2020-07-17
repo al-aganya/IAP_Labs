@@ -5,19 +5,24 @@ if (isset($_POST['btn-save'])) {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $city_name = $_POST['city_name'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    $user = new User($first_name, $last_name, $city_name);
+    $user = new User($first_name, $last_name, $city_name, $username, $password);
     if(!$user->validateForm()) {
         $user->createFormErrorSessions();
-        header("REfresh:0");
+        header("Refresh:0");
         die();
     }
-    $res = $user->save();
-
-    if ($res === TRUE) {
-        header("Location: lab1.php");
-    } else {
-        echo "<pre class='text-danger'>Error adding User</pre>";
+    if ($user->isUserExist()) {
+        $res = $user->save();        
+        if ($res === TRUE) {
+            header("Location: lab1.php");
+        } else {
+            echo "<div class='container'><div class='card card-sm shadow mt-2 text-center text-danger'>Error adding User</div></div>";
+        }
+    }else {
+        echo "<div class='container'><div class='card card-sm shadow mt-2 text-center text-danger'>Username already taken</div></div>";
     }
 }
 ?>
@@ -58,7 +63,7 @@ if (isset($_POST['btn-save'])) {
                     </tr>
                     <tr>
                         <td class="text-center">
-                            <h3>Insert Form</h3>
+                            <h3>Register Form</h3>
                         </td>
                     </tr>
                 </thead>
@@ -76,15 +81,33 @@ if (isset($_POST['btn-save'])) {
                                 placeholder="City" id=""></td>
                     </tr>
                     <tr>
+                        <td class='text-center'><input class="form-control" type="text" name="username"
+                                placeholder="Username" id=""></td>
+                    </tr>
+                    <tr>
+                        <td class='text-center'><input class="form-control" type="password" name="password"
+                                placeholder="Password" id=""></td>
+                    </tr>
+                    <tr>
                         <td class='text-center'><button class="btn btn-block btn-secondary" type="submit"
                                 name="btn-save"><strong>SAVE</strong></button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="login.php" class="btn btn-block btn-link">Log in</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </form>
 
-        <table class="table table-sm table-dark table-bordered">
+        <table class="table table-sm table-dark ">
             <thead class="text-primary">
+                <tr class="text-secondary">
+                    <th>
+                        <h3>Registered Users</h3>
+                    </th>
+                </tr>
                 <tr>
                     <th class="text-center">
                         First Name
@@ -99,10 +122,8 @@ if (isset($_POST['btn-save'])) {
             </thead>
             <tbody>
                 <?php
-                $a = "";
-                $b = "";
-                $c = "";
-                $user = new User($a, $b, $c);
+                $a = ""; 
+                $user = new User($a, $a, $a, $a, $a);
                 $datas = $user->readAll();
                 foreach ($datas as $data) {
                     echo "<tr><td class='text-center'>" . $data["first_name"] . "</td><td class='text-center'>" . $data["last_name"] . "</td><td class='text-center'>" . $data["user_city"] . "</td></tr>";
