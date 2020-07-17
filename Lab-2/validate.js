@@ -1,0 +1,11 @@
+function validateForm (params) {
+    var fname = document.forms["user_details"]["first_name"].value;
+    var lname = document.forms["user_details"]["last_name"].value;
+    var city = document.forms["user_details"]["city_name"].value;
+
+    if (fname== null || lname == "" || city == "" ){
+        alert("All fields are required!");
+        return false;
+    }
+    return true;
+}
